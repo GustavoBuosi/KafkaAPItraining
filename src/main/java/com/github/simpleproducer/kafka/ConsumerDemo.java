@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +15,9 @@ import java.util.Properties;
 public class ConsumerDemo {
     public static void main(String[] args) {
         String bootstrapServers = "127.0.0.1:9092";
-        String groupId = "my-consumer-test-application";
+        String groupId = "my-consumer-test-application"; //Note that after we execute this topic, without
+        //a reset offsets option
+        //on our second run we would not be consuming anything! We can also change the group Id to reset the application.
         Logger logger = LoggerFactory.getLogger(ConsumerDemo.class.getName());
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);
