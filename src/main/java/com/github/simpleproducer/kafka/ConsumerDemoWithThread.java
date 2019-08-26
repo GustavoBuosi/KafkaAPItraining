@@ -16,18 +16,55 @@ import java.util.concurrent.CountDownLatch;
 
 public class ConsumerDemoWithThread {
     public static void main(String[] args) {
+        new ConsumerDemoWithThread().run();
+    }
+
+    private ConsumerDemoWithThread(){
+
+    }
+
+    public void run(){
+        Logger logger = LoggerFactory.getLogger(ConsumerDemoWithThread.class.getName());
+
         String bootstrapServers = "127.0.0.1:9092";
         String groupId = "my-consumer-test-application"; //Note that after we execute this topic, without
         String topic = "test_topic";
         //a reset offsets option on our second run we would not be consuming anything!
         // We can also change the group Id to reset the application.
-Runnable myConsumerThread = new ConsumerThread(
-        bootstrapServers,
-        topic,
-        groupId
-);
+
+       //Latch for dealing with multiple threads
+        CountDownLatch latch = new CountDownLatch(1);
+
+        logger.info("Creating the consumer thread");
+        Runnable myConsumerRunnable = new ConsumerRunnable(
+                latch,
+                bootstrapServers,
+                topic,
+                groupId
+        );
+        //Starting consumer thread
+        Thread myThread = new Thread(myConsumerRunnable);
+        myThread.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+        logger.info("Caught shutdown hook");
+            ((ConsumerRunnable) myConsumerRunnable).shutdown();
+        }
+
+        ));
+
+        try {
+            latch.await();
+        }
+        catch (InterruptedException e){
+            logger.error("Application got interrupted", e);
+        }
+        finally {
+            logger.info("Application is closing");
+        }
     }
-    public class ConsumerThread implements Runnable {
+
+    public class ConsumerRunnable implements Runnable {
 //Implements Runnable requires the following Override on Run:
 
         private CountDownLatch latch;
@@ -35,7 +72,7 @@ Runnable myConsumerThread = new ConsumerThread(
         private Logger logger = LoggerFactory.getLogger(ConsumerDemoWithThread.class.getName());
 
 
-        public ConsumerThread(CountDownLatch latch, String bootstrapServers, String topic, String groupId) {
+        public ConsumerRunnable(CountDownLatch latch, String bootstrapServers, String topic, String groupId) {
             this.latch = latch;
             Properties properties = new Properties();
             properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);
@@ -44,6 +81,11 @@ Runnable myConsumerThread = new ConsumerThread(
             properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
             properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); //This always reset the offset for the group.
+
+            // create consumer
+            consumer = new KafkaConsumer<String, String>(properties);
+            // subscribe consumer to our topic(s)
+            consumer.subscribe(Arrays.asList(topic));
         }
             @Override
         public void run() {
