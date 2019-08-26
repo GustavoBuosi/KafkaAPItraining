@@ -1,4 +1,4 @@
-package com.github.simpleproducer.kafka;
+package com.github.nocompany.kafka.simpleproducer;
 
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -19,6 +19,7 @@ public class ProducerDemo {
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         //In producer we need to serialize
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all")
 //        properties.setProperty("bootstrap.servers","127.0.0.1:9092");
 //        properties.setProperty("key.serializer", StringSerializer.class.getName());
 //        properties.setProperty("bootstrap.servers",StringSerializer.class.getName());

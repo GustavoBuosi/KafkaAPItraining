@@ -1,4 +1,4 @@
-package com.github.simpleproducer.kafka;
+package com.github.nocompany.kafka.simpleproducer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 
 public class ConsumerDemo {

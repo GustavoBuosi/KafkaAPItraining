@@ -1,4 +1,4 @@
-package com.github.simpleproducer.kafka;
+package com.github.nocompany.kafka.simpleproducer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -27,7 +27,7 @@ public class ConsumerDemoWithThread {
         Logger logger = LoggerFactory.getLogger(ConsumerDemoWithThread.class.getName());
 
         String bootstrapServers = "127.0.0.1:9092";
-        String groupId = "my-consumer-test-application"; //Note that after we execute this topic, without
+        String groupId = "my-consumer-test-application-second"; //Note that after we execute this topic, without
         String topic = "test_topic";
         //a reset offsets option on our second run we would not be consuming anything!
         // We can also change the group Id to reset the application.
@@ -72,6 +72,7 @@ public class ConsumerDemoWithThread {
     public class ConsumerRunnable implements Runnable {
 //Implements Runnable requires the following Override on Run:
 
+        //Variable declaration:
         private CountDownLatch latch;
         private KafkaConsumer<String,String> consumer;
         private Logger logger = LoggerFactory.getLogger(ConsumerDemoWithThread.class.getName());
