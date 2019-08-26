@@ -49,6 +49,11 @@ public class ConsumerDemoWithThread {
         Runtime.getRuntime().addShutdownHook(new Thread( () -> {
         logger.info("Caught shutdown hook");
             ((ConsumerRunnable) myConsumerRunnable).shutdown();
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         ));
